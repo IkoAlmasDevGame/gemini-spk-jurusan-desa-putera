@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMK Desa Putera | SPK Jurusan</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config for Custom Colors and Fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e5edff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                        'btn': '0 10px 20px -5px rgba(37, 99, 235, 0.4)',
+                        'btn-hover': '0 15px 25px -5px rgba(37, 99, 235, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Glassmorphism Navbar */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Page transition class */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Indicator Pill */
+        .indicator-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.85rem;
+            background-color: #f1f5f9;
+            color: #334155;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0.25rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+        .indicator-pill:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigate('home')">
+                    <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-btn mr-3">
+                        <i class="ph ph-graduation-cap text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg md:text-xl tracking-tight text-slate-900 block leading-tight">SMK Desa Putera</span>
+                        <span class="text-[10px] md:text-xs text-slate-500 font-medium">SPK Jurusan Terpadu</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex space-x-8 items-center">
+                    <a href="#" onclick="navigate('info')" class="text-slate-600 hover:text-brand-600 font-medium transition-colors">Info</a>
+                    <a href="#" onclick="navigate('jadwal')" class="text-slate-600 hover:text-brand-600 font-medium transition-colors">Jadwal</a>
+                    <a href="#" onclick="navigate('akademik')" class="text-slate-600 hover:text-brand-600 font-medium transition-colors">Akademik</a>
+                    <a href="#" onclick="navigate('hasil')" class="text-slate-600 hover:text-brand-600 font-medium transition-colors">Hasil SPK</a>
+                    
+                    <button onclick="navigate('hasil')" class="bg-slate-900 hover:bg-brand-600 text-white px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-[0_8px_15px_-3px_rgba(0,0,0,0.2)] hover:shadow-btn-hover hover:-translate-y-0.5">
+                        Cek Status
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="lg:hidden flex items-center">
+                    <button onclick="toggleMenu()" class="text-slate-600 hover:text-slate-900 focus:outline-none p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-slate-100 absolute w-full shadow-lg">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="#" onclick="navigate('info'); toggleMenu()" class="block px-4 py-3 text-slate-600 font-medium hover:bg-slate-50 hover:text-brand-600 rounded-lg transition-colors">Info</a>
+                <a href="#" onclick="navigate('jadwal'); toggleMenu()" class="block px-4 py-3 text-slate-600 font-medium hover:bg-slate-50 hover:text-brand-600 rounded-lg transition-colors">Jadwal</a>
+                <a href="#" onclick="navigate('akademik'); toggleMenu()" class="block px-4 py-3 text-slate-600 font-medium hover:bg-slate-50 hover:text-brand-600 rounded-lg transition-colors">Akademik</a>
+                <a href="#" onclick="navigate('hasil'); toggleMenu()" class="block px-4 py-3 text-slate-600 font-medium hover:bg-slate-50 hover:text-brand-600 rounded-lg transition-colors">Hasil SPK</a>
+                <div class="pt-2 mt-2 border-t border-slate-100">
+                    <button onclick="navigate('hasil'); toggleMenu()" class="w-full bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-btn">
+                        Cek Status
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow pt-20">
+        
+        <!-- HERO PAGE -->
+        <section id="home" class="page-section active min-h-[85vh] flex items-center relative overflow-hidden bg-white py-12 lg:py-0">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 md:w-96 md:h-96 bg-brand-50 rounded-full blur-3xl opacity-70 pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 md:w-80 md:h-80 bg-blue-50 rounded-full blur-3xl opacity-70 pointer-events-none"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+                    <div class="text-left">
+                        <div class="inline-flex items-center space-x-2 bg-brand-50 text-brand-600 px-3 py-1.5 md:px-4 md:py-2 rounded-full font-semibold text-xs md:text-sm mb-6 border border-brand-100">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-500 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-600"></span>
+                            </span>
+                            <span>Sistem Pendukung Keputusan T.A 2026/2027</span>
+                        </div>
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15] mb-6">
+                            Optimalkan Potensi <br class="hidden sm:block">
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-blue-400">Masa Depanmu.</span>
+                        </h1>
+                        <p class="text-base md:text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
+                            Platform cerdas untuk membantu calon siswa SMK Desa Putera menentukan kompetensi keahlian yang paling tepat berdasarkan minat, bakat, dan nilai akademik.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button onclick="navigate('akademik')" class="bg-brand-600 hover:bg-brand-500 text-white px-6 py-3.5 sm:px-8 sm:py-4 rounded-xl font-bold transition-all duration-300 shadow-btn hover:shadow-btn-hover hover:-translate-y-1 flex justify-center items-center gap-2">
+                                Pelajari Jurusan <i class="ph ph-arrow-right text-xl"></i>
+                            </button>
+                            <button onclick="navigate('hasil')" class="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-6 py-3.5 sm:px-8 sm:py-4 rounded-xl font-bold transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1 flex justify-center items-center gap-2">
+                                Lihat Hasil Seleksi
+                            </button>
+                        </div>
+                    </div>
+                    <div class="relative w-full max-w-md mx-auto lg:max-w-none">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-brand-100 to-white rounded-[2rem] transform rotate-3 scale-105 hidden sm:block"></div>
+                        <!-- Proportional Image -->
+                        <div class="relative bg-white p-2 rounded-[1.5rem] sm:rounded-[2rem] shadow-soft border border-slate-100 z-10 overflow-hidden group cursor-pointer hover:-translate-y-2 transition-transform duration-500">
+                            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Students Collaboration" class="rounded-[1.2rem] sm:rounded-[1.5rem] w-full object-cover aspect-video sm:aspect-[4/3] lg:h-[450px] group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 bg-white/90 backdrop-blur rounded-xl p-3 sm:p-4 shadow-lg border border-white/50">
+                                <div class="flex items-center gap-3 sm:gap-4">
+                                    <div class="bg-green-100 p-2 sm:p-3 rounded-lg text-green-600"><i class="ph ph-chart-line-up text-xl sm:text-2xl"></i></div>
+                                    <div>
+                                        <p class="text-xs sm:text-sm text-slate-500 font-medium">Akurasi Rekomendasi</p>
+                                        <p class="text-lg sm:text-xl font-bold text-slate-900">98.5%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INFO PAGE -->
+        <section id="info" class="page-section py-16 lg:py-24 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Informasi Sistem & Sekolah</h2>
+                    <p class="text-slate-600 text-base md:text-lg">Mengenal lebih dekat sistem pendukung keputusan dan profil SMK Desa Putera.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- About SPK -->
+                    <div class="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl shadow-soft border border-slate-100 hover:shadow-xl transition-shadow duration-300">
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-brand-50 rounded-xl md:rounded-2xl flex items-center justify-center text-brand-600 mb-6">
+                            <i class="ph ph-cpu text-2xl md:text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-900 mb-4">Tentang SPK</h3>
+                        <p class="text-slate-600 text-sm md:text-base leading-relaxed mb-6">
+                            Sistem Pendukung Keputusan (SPK) Pemilihan Jurusan SMK Desa Putera menggunakan metode analitis terdepan untuk mencocokkan profil calon siswa dengan kompetensi keahlian yang tersedia. 
+                            Kami menganalisis nilai akademik, hasil tes bakat skolastik, dan minat siswa untuk memberikan rekomendasi yang presisi.
+                        </p>
+                        <ul class="space-y-3">
+                            <li class="flex items-start text-slate-700 font-medium text-sm md:text-base"><i class="ph-fill ph-check-circle text-brand-500 mr-3 text-xl shrink-0 mt-0.5"></i> Objektif & Transparan</li>
+                            <li class="flex items-start text-slate-700 font-medium text-sm md:text-base"><i class="ph-fill ph-check-circle text-brand-500 mr-3 text-xl shrink-0 mt-0.5"></i> Berbasis Data Akademik</li>
+                            <li class="flex items-start text-slate-700 font-medium text-sm md:text-base"><i class="ph-fill ph-check-circle text-brand-500 mr-3 text-xl shrink-0 mt-0.5"></i> Analisis Minat & Bakat</li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="bg-slate-900 p-6 sm:p-8 lg:p-10 rounded-3xl shadow-xl text-white relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+                        
+                        <h3 class="text-xl md:text-2xl font-bold mb-8 relative z-10">Hubungi Kami</h3>
+                        
+                        <div class="space-y-6 relative z-10">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl flex items-center justify-center mr-4 shrink-0">
+                                    <i class="ph ph-buildings text-xl md:text-2xl text-blue-300"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs md:text-sm text-blue-300 font-semibold mb-1">SMK Desa Putera</h4>
+                                    <p class="text-slate-300 text-sm md:text-base leading-relaxed">Jl. Komp. Desa Putera No.5, RT.7/RW.5,<br>Srengseng Sawah, Kec. Jagakarsa,<br>Kota Jakarta Selatan 12640</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl flex items-center justify-center mr-4 shrink-0">
+                                    <i class="ph ph-phone text-xl md:text-2xl text-blue-300"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs md:text-sm text-blue-300 font-semibold mb-1">Nomor Telepon</h4>
+                                    <p class="text-slate-300 text-base md:text-lg">(021) 78886156</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl flex items-center justify-center mr-4 shrink-0">
+                                    <i class="ph ph-envelope-simple text-xl md:text-2xl text-blue-300"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs md:text-sm text-blue-300 font-semibold mb-1">Alamat Email</h4>
+                                    <p class="text-slate-300 text-sm md:text-base break-all">humas@smkdesaputera.sch.id</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- JADWAL PAGE -->
+        <section id="jadwal" class="page-section py-16 lg:py-24 bg-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12 md:mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Jadwal Seleksi & SPK</h2>
+                    <p class="text-slate-600 text-base md:text-lg">Perhatikan tenggat waktu untuk setiap tahapan proses penentuan jurusan.</p>
+                </div>
+
+                <div class="relative">
+                    <!-- Central/Left Line -->
+                    <div class="absolute left-[11px] md:left-1/2 md:-ml-px top-2 bottom-2 w-0.5 bg-slate-200 -z-10"></div>
+
+                    <!-- Timeline Item 1 -->
+                    <div class="relative pl-10 md:pl-0 md:flex items-center justify-between w-full mb-10 md:mb-12">
+                        <div class="absolute w-4 h-4 rounded-full bg-brand-600 left-[4px] md:left-1/2 md:-ml-2 top-1.5 md:top-auto shadow-[0_0_0_4px_#e5edff]"></div>
+                        <div class="md:w-5/12 md:text-right md:pr-10">
+                            <h3 class="text-lg md:text-xl font-bold text-slate-900">Pendaftaran & Input Data</h3>
+                            <p class="text-slate-500 mt-2 text-sm leading-relaxed">Pengisian biodata dan input nilai rapor SMP secara online melalui portal ini.</p>
+                        </div>
+                        <div class="hidden md:block w-2/12"></div>
+                        <div class="md:w-5/12 mt-3 md:mt-0 md:pl-10">
+                            <div class="inline-block bg-slate-100 text-slate-800 font-semibold px-4 py-2 rounded-lg shadow-sm text-sm">
+                                01 - 15 Mei 2026
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 2 -->
+                    <div class="relative pl-10 md:pl-0 md:flex items-center justify-between w-full mb-10 md:mb-12">
+                        <div class="absolute w-4 h-4 rounded-full bg-brand-600 left-[4px] md:left-1/2 md:-ml-2 top-1.5 md:top-auto shadow-[0_0_0_4px_#e5edff]"></div>
+                        <div class="md:w-5/12 md:text-right md:pr-10 order-1 md:order-3">
+                            <div class="inline-block bg-slate-100 text-slate-800 font-semibold px-4 py-2 rounded-lg shadow-sm text-sm mb-3 md:mb-0">
+                                20 Mei 2026
+                            </div>
+                        </div>
+                        <div class="hidden md:block w-2/12 order-2"></div>
+                        <div class="md:w-5/12 mt-0 md:mt-0 md:pl-10 order-3 md:order-1 md:text-left">
+                            <h3 class="text-lg md:text-xl font-bold text-slate-900">Tes Potensi Akademik</h3>
+                            <p class="text-slate-500 mt-2 text-sm leading-relaxed">Pelaksanaan tes tertulis untuk mengukur kemampuan dasar dan logika calon siswa.</p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 3 -->
+                    <div class="relative pl-10 md:pl-0 md:flex items-center justify-between w-full mb-10 md:mb-12">
+                        <div class="absolute w-4 h-4 rounded-full bg-brand-600 left-[4px] md:left-1/2 md:-ml-2 top-1.5 md:top-auto shadow-[0_0_0_4px_#e5edff]"></div>
+                        <div class="md:w-5/12 md:text-right md:pr-10">
+                            <h3 class="text-lg md:text-xl font-bold text-slate-900">Proses SPK & Penjurusan</h3>
+                            <p class="text-slate-500 mt-2 text-sm leading-relaxed">Sistem memproses data nilai rapor, hasil TPA, dan kuesioner minat untuk menghasilkan rekomendasi.</p>
+                        </div>
+                        <div class="hidden md:block w-2/12"></div>
+                        <div class="md:w-5/12 mt-3 md:mt-0 md:pl-10">
+                            <div class="inline-block bg-brand-50 text-brand-700 font-semibold px-4 py-2 rounded-lg shadow-sm border border-brand-200 text-sm">
+                                25 - 28 Mei 2026
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 4 -->
+                    <div class="relative pl-10 md:pl-0 md:flex items-center justify-between w-full">
+                        <div class="absolute w-4 h-4 rounded-full bg-slate-300 left-[4px] md:left-1/2 md:-ml-2 top-1.5 md:top-auto shadow-[0_0_0_4px_#f1f5f9]"></div>
+                        <div class="md:w-5/12 md:text-right md:pr-10 order-1 md:order-3">
+                            <div class="inline-block bg-slate-800 text-white font-semibold px-4 py-2 rounded-lg shadow-md text-sm mb-3 md:mb-0">
+                                01 Juni 2026
+                            </div>
+                        </div>
+                        <div class="hidden md:block w-2/12 order-2"></div>
+                        <div class="md:w-5/12 mt-0 md:mt-0 md:pl-10 order-3 md:order-1 md:text-left">
+                            <h3 class="text-lg md:text-xl font-bold text-slate-900">Pengumuman Hasil</h3>
+                            <p class="text-slate-500 mt-2 text-sm leading-relaxed">Publikasi hasil rekomendasi jurusan melalui menu "Hasil SPK" pada portal ini.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AKADEMIK PAGE -->
+        <section id="akademik" class="page-section py-16 lg:py-24 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+                    <span class="text-brand-600 font-bold uppercase tracking-wider text-xs md:text-sm mb-2 block">Kompetensi Keahlian</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Program Keahlian Tersedia</h2>
+                    <p class="text-slate-600 text-base md:text-lg">SMK Desa Putera menawarkan 3 program keahlian industri kreatif yang unggul dan berstandar industri.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                    <!-- Jurusan 1: Desain Grafika -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-100 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] transition-all duration-300 transform hover:-translate-y-2 flex flex-col h-full group">
+                        <div class="w-14 h-14 bg-blue-50 text-brand-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-brand-600 group-hover:text-white transition-colors duration-300 shadow-sm">
+                            <i class="ph ph-bezier-curve"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-900 mb-3">Desain Grafika</h3>
+                        <p class="text-slate-600 text-sm md:text-base mb-6 flex-grow">Fokus pada perancangan visual, tata letak, dan komunikasi visual menggunakan perangkat lunak industri.</p>
+                        
+                        <div>
+                            <p class="text-xs md:text-sm font-semibold text-slate-900 mb-3 uppercase tracking-wider">Indikator Kompetensi:</p>
+                            <div class="flex flex-wrap -mx-1">
+                                <span class="indicator-pill">Desain Grafis</span>
+                                <span class="indicator-pill">Cetak Digital</span>
+                                <span class="indicator-pill">Photoreproduksi</span>
+                                <span class="indicator-pill">Montase</span>
+                                <span class="indicator-pill">Pembuatan Acuan Cetak</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jurusan 2: Produksi Grafika -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-100 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] transition-all duration-300 transform hover:-translate-y-2 flex flex-col h-full group">
+                        <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300 shadow-sm">
+                            <i class="ph ph-printer"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-900 mb-3">Produksi Grafika</h3>
+                        <p class="text-slate-600 text-sm md:text-base mb-6 flex-grow">Penguasaan teknik cetak massal, operasional mesin industri percetakan, dan finishing produk grafika.</p>
+                        
+                        <div>
+                            <p class="text-xs md:text-sm font-semibold text-slate-900 mb-3 uppercase tracking-wider">Indikator Kompetensi:</p>
+                            <div class="flex flex-wrap -mx-1">
+                                <span class="indicator-pill">Cetak Offset</span>
+                                <span class="indicator-pill">Cetak Tinggi</span>
+                                <span class="indicator-pill">Cetak Dalam</span>
+                                <span class="indicator-pill">Cetak Sablon</span>
+                                <span class="indicator-pill">Campur Warna</span>
+                                <span class="indicator-pill">Jilid Kemas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jurusan 3: Multimedia -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-100 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] transition-all duration-300 transform hover:-translate-y-2 flex flex-col h-full group md:col-span-2 lg:col-span-1">
+                        <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300 shadow-sm">
+                            <i class="ph ph-video-camera"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-900 mb-3">Multimedia</h3>
+                        <p class="text-slate-600 text-sm md:text-base mb-6 flex-grow">Pengembangan konten digital interaktif, audio visual, animasi, dan pemodelan tiga dimensi.</p>
+                        
+                        <div>
+                            <p class="text-xs md:text-sm font-semibold text-slate-900 mb-3 uppercase tracking-wider">Indikator Kompetensi:</p>
+                            <div class="flex flex-wrap -mx-1">
+                                <span class="indicator-pill">Photography</span>
+                                <span class="indicator-pill">3D Desain</span>
+                                <span class="indicator-pill">Motion Graphic</span>
+                                <span class="indicator-pill">Animation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HASIL PAGE -->
+        <section id="hasil" class="page-section py-16 lg:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-slate-200 pb-6">
+                    <div class="mb-4 md:mb-0">
+                        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Hasil Rekomendasi SPK</h2>
+                        <p class="text-sm md:text-base text-slate-500">Pilih nama siswa untuk melihat rincian detail perhitungan sistem.</p>
+                    </div>
+                    <div class="relative w-full md:w-80">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-3.5 md:top-3 text-slate-400 text-lg"></i>
+                        <input type="text" placeholder="Cari NISN atau Nama..." class="w-full pl-10 pr-4 py-3 md:py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-sm">
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-soft border border-slate-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[700px]">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 text-xs sm:text-sm uppercase tracking-wider">
+                                    <th class="p-4 sm:p-5 font-semibold">NISN</th>
+                                    <th class="p-4 sm:p-5 font-semibold">Nama Lengkap</th>
+                                    <th class="p-4 sm:p-5 font-semibold">Asal Sekolah</th>
+                                    <th class="p-4 sm:p-5 font-semibold">Rekomendasi Utama</th>
+                                    <th class="p-4 sm:p-5 font-semibold text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100" id="table-body">
+                                <!-- Data will be populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm text-slate-500 gap-4 sm:gap-0">
+                        <span>Menampilkan 1-5 dari 120 data</span>
+                        <div class="flex space-x-1">
+                            <button class="px-2 sm:px-3 py-1 border border-slate-200 rounded hover:bg-slate-200">Sebelumn</button>
+                            <button class="px-3 py-1 bg-brand-600 text-white rounded shadow-sm">1</button>
+                            <button class="px-3 py-1 border border-slate-200 rounded hover:bg-slate-200">2</button>
+                            <button class="px-2 sm:px-3 py-1 border border-slate-200 rounded hover:bg-slate-200">Lanjut</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DETAIL HASIL PAGE -->
+        <section id="detail" class="page-section py-12 lg:py-16 bg-slate-50 min-h-[80vh]">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <button onclick="navigate('hasil')" class="flex items-center text-slate-500 hover:text-brand-600 mb-6 lg:mb-8 font-medium transition-colors text-sm md:text-base">
+                    <i class="ph ph-arrow-left mr-2"></i> Kembali ke Daftar Hasil
+                </button>
+
+                <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+                    <div class="bg-slate-900 p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-48 h-48 sm:w-64 sm:h-64 bg-brand-500 opacity-20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-6 md:gap-0">
+                            <div>
+                                <p class="text-brand-300 font-semibold mb-1 text-sm" id="detail-nisn">0081234567</p>
+                                <h2 class="text-2xl sm:text-3xl font-bold mb-2" id="detail-nama">Nama Siswa</h2>
+                                <p class="text-slate-400 text-sm sm:text-base" id="detail-asal">SMP Negeri 1 Jakarta</p>
+                            </div>
+                            <div class="w-full md:w-auto bg-white/10 backdrop-blur border border-white/20 p-4 rounded-2xl text-center min-w-[200px]">
+                                <p class="text-xs sm:text-sm text-slate-300 mb-1">Keputusan Akhir SPK</p>
+                                <p class="text-xl sm:text-2xl font-bold text-green-400" id="detail-keputusan">Desain Grafika</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 sm:p-8 lg:p-10 grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12">
+                        <!-- Chart/Bars Section -->
+                        <div>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-6 flex items-center">
+                                <i class="ph ph-chart-bar text-brand-600 mr-2 text-xl"></i> Skor Kesesuaian Jurusan
+                            </h3>
+                            
+                            <div class="space-y-6">
+                                <!-- Bar 1 -->
+                                <div>
+                                    <div class="flex justify-between text-xs sm:text-sm font-semibold mb-2">
+                                        <span class="text-slate-700">Desain Grafika</span>
+                                        <span class="text-brand-600" id="score-dg-text">85%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2.5 sm:h-3">
+                                        <div class="bg-brand-500 h-2.5 sm:h-3 rounded-full transition-all duration-1000 w-0" id="score-dg-bar"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Bar 2 -->
+                                <div>
+                                    <div class="flex justify-between text-xs sm:text-sm font-semibold mb-2">
+                                        <span class="text-slate-700">Produksi Grafika</span>
+                                        <span class="text-orange-600" id="score-pg-text">70%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2.5 sm:h-3">
+                                        <div class="bg-orange-500 h-2.5 sm:h-3 rounded-full transition-all duration-1000 w-0" id="score-pg-bar"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Bar 3 -->
+                                <div>
+                                    <div class="flex justify-between text-xs sm:text-sm font-semibold mb-2">
+                                        <span class="text-slate-700">Multimedia</span>
+                                        <span class="text-purple-600" id="score-mm-text">92%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2.5 sm:h-3">
+                                        <div class="bg-purple-500 h-2.5 sm:h-3 rounded-full transition-all duration-1000 w-0" id="score-mm-bar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Analisis Detail -->
+                        <div>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-6 flex items-center">
+                                <i class="ph ph-file-text text-brand-600 mr-2 text-xl"></i> Catatan Analisis
+                            </h3>
+                            <div class="bg-brand-50 rounded-2xl p-5 sm:p-6 border border-brand-100">
+                                <p class="text-slate-700 text-xs sm:text-sm leading-relaxed mb-4" id="detail-analisis">
+                                    Berdasarkan analisis metode SPK (Simple Additive Weighting), kandidat memiliki kecenderungan nilai tertinggi pada kriteria kreativitas visual dan literasi digital. 
+                                </p>
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                                    <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase mb-2">Saran Pengembangan:</p>
+                                    <p class="text-xs sm:text-sm text-slate-800 font-medium" id="detail-saran">Sangat direkomendasikan masuk Multimedia untuk mengasah bakat Animation dan 3D Design.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-10 sm:py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            <div class="sm:col-span-2 md:col-span-1">
+                <div class="flex items-center mb-4">
+                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white mr-2">
+                        <i class="ph ph-graduation-cap"></i>
+                    </div>
+                    <span class="font-bold text-lg text-white">SMK Desa Putera</span>
+                </div>
+                <p class="text-xs sm:text-sm leading-relaxed max-w-sm mb-4">Sistem Pendukung Keputusan Pemilihan Kompetensi Keahlian untuk penerimaan peserta didik baru yang akurat dan transparan.</p>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-semibold mb-4 text-sm sm:text-base">Tautan Penting</h4>
+                <ul class="space-y-2 text-xs sm:text-sm">
+                    <li><a href="#" onclick="navigate('info')" class="hover:text-brand-400 transition">Informasi SPK</a></li>
+                    <li><a href="#" onclick="navigate('akademik')" class="hover:text-brand-400 transition">Kompetensi Keahlian</a></li>
+                    <li><a href="#" onclick="navigate('jadwal')" class="hover:text-brand-400 transition">Jadwal Seleksi</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-semibold mb-4 text-sm sm:text-base">Kontak Info</h4>
+                <ul class="space-y-3 text-xs sm:text-sm">
+                    <li class="flex items-start"><i class="ph ph-map-pin mr-2 mt-0.5 text-brand-500 text-lg shrink-0"></i> <span>Jl. Komp. Desa Putera No.5, RT.7/RW.5, Srengseng Sawah, Kec. Jagakarsa, Kota Jakarta Selatan 12640</span></li>
+                    <li class="flex items-center"><i class="ph ph-phone mr-2 text-brand-500 text-lg shrink-0"></i> (021) 78886156</li>
+                    <li class="flex items-center"><i class="ph ph-envelope mr-2 text-brand-500 text-lg shrink-0"></i> humas@smkdesaputera.sch.id</li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pt-6 border-t border-slate-800 text-xs sm:text-sm text-center">
+            &copy; 2026 SMK Desa Putera. Hak Cipta Dilindungi Undang-Undang.
+        </div>
+    </footer>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+        // Data Mockup untuk SPK
+        const studentsData = [
+            { id: 1, nisn: '0081234501', name: 'Ahmad Budi Santoso', asal: 'SMPN 46 Jakarta', dg: 65, pg: 75, mm: 92, result: 'Multimedia' },
+            { id: 2, nisn: '0081234502', name: 'Siti Aminah', asal: 'SMPN 211 Jakarta', dg: 88, pg: 60, mm: 75, result: 'Desain Grafika' },
+            { id: 3, nisn: '0081234503', name: 'Kevin Pratama', asal: 'SMP Desa Putera', dg: 70, pg: 90, mm: 65, result: 'Produksi Grafika' },
+            { id: 4, nisn: '0081234504', name: 'Diana Putri', asal: 'SMPN 253 Jakarta', dg: 95, pg: 50, mm: 85, result: 'Desain Grafika' },
+            { id: 5, nisn: '0081234505', name: 'Reza Rahadian', asal: 'SMP Tarakanita', dg: 75, pg: 70, mm: 98, result: 'Multimedia' },
+        ];
+
+        // Toggle Mobile Menu
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Fungsi Navigasi Halaman
+        function navigate(pageId) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Fungsi Render Tabel Hasil
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            
+            studentsData.forEach(student => {
+                let badgeColor = '';
+                if(student.result === 'Multimedia') badgeColor = 'bg-purple-100 text-purple-700 border-purple-200';
+                else if(student.result === 'Desain Grafika') badgeColor = 'bg-blue-100 text-blue-700 border-blue-200';
+                else badgeColor = 'bg-orange-100 text-orange-700 border-orange-200';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors group text-sm sm:text-base';
+                tr.innerHTML = `
+                    <td class="p-4 sm:p-5 border-b border-slate-100 text-slate-600 font-medium">${student.nisn}</td>
+                    <td class="p-4 sm:p-5 border-b border-slate-100 font-bold text-slate-900">${student.name}</td>
+                    <td class="p-4 sm:p-5 border-b border-slate-100 text-slate-500">${student.asal}</td>
+                    <td class="p-4 sm:p-5 border-b border-slate-100">
+                        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold border ${badgeColor} whitespace-nowrap">
+                            ${student.result}
+                        </span>
+                    </td>
+                    <td class="p-4 sm:p-5 border-b border-slate-100 text-right">
+                        <button onclick="showDetail(${student.id})" class="text-brand-600 text-xs sm:text-sm font-semibold hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 sm:px-4 py-2 rounded-lg transition-colors flex items-center justify-center md:justify-end ml-auto">
+                            Detail <i class="ph ph-caret-right ml-1"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Fungsi Tampilkan Detail
+        function showDetail(id) {
+            const student = studentsData.find(s => s.id === id);
+            if(!student) return;
+
+            // Isi Data Teks
+            document.getElementById('detail-nisn').innerText = `NISN: ${student.nisn}`;
+            document.getElementById('detail-nama').innerText = student.name;
+            document.getElementById('detail-asal').innerText = student.asal;
+            document.getElementById('detail-keputusan').innerText = student.result;
+
+            // Warna Keputusan Akhir
+            const kepEl = document.getElementById('detail-keputusan');
+            kepEl.className = 'text-xl sm:text-2xl font-bold ' + 
+                (student.result === 'Multimedia' ? 'text-purple-400' : 
+                 student.result === 'Desain Grafika' ? 'text-blue-400' : 'text-orange-400');
+
+            // Reset Bars
+            document.getElementById('score-dg-bar').style.width = '0%';
+            document.getElementById('score-pg-bar').style.width = '0%';
+            document.getElementById('score-mm-bar').style.width = '0%';
+
+            // Teks Skor
+            document.getElementById('score-dg-text').innerText = student.dg + '%';
+            document.getElementById('score-pg-text').innerText = student.pg + '%';
+            document.getElementById('score-mm-text').innerText = student.mm + '%';
+
+            // Narasi Analisis & Saran (Mock Logic)
+            document.getElementById('detail-analisis').innerText = `Kandidat bernama ${student.name} dari ${student.asal} telah melalui perhitungan matrik penilaian SPK. Ditemukan kecocokan tertinggi pada parameter jurusan ${student.result}.`;
+            document.getElementById('detail-saran').innerText = `Disarankan untuk memilih ${student.result} sebagai prioritas pertama saat pendaftaran ulang.`;
+
+            // Pindah Halaman
+            navigate('detail');
+
+            // Animasi Bar (setTimeout untuk memicu transisi CSS setelah elemen render)
+            setTimeout(() => {
+                document.getElementById('score-dg-bar').style.width = student.dg + '%';
+                document.getElementById('score-pg-bar').style.width = student.pg + '%';
+                document.getElementById('score-mm-bar').style.width = student.mm + '%';
+            }, 50);
+        }
+
+        // Initialize Render
+        window.onload = () => {
+            renderTable();
+        };
+    </script>
+</body>
+</html>
